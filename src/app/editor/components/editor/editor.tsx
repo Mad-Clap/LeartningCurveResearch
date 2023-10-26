@@ -11,6 +11,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { ListNode, ListItemNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createTextNode, $getRoot } from 'lexical';
+import { $createParagraphNode } from "lexical";
 import { DocType, $createDoctypeConceitual } from "../../plugins/conceitual_node/conceitual";
 
 
@@ -35,6 +36,7 @@ const theme = {
         editor.update(() => {
             const root = $getRoot()
             root.append($createDoctypeConceitual().append($createTextNode("some text")))
+            root.append($createParagraphNode())
         })
     }
 
