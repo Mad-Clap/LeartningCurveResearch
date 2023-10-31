@@ -8,9 +8,7 @@
     outline: none;
 }
 
-.docType{
-    min-height: 30px;
-    min-width: 50px;
+.documentoEstilo{
     border: 4px solid #fff;
     background-color:cadetblue;
 }
