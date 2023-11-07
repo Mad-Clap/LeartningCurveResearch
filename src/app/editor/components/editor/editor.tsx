@@ -12,11 +12,12 @@ import { ListNode, ListItemNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
 import { DocumentoNo, DocumentoNoPlugin } from "../../plugins/Documento/DocumentoNode";
-import { StickyHeadingNode } from "../../plugins/Sticky-headNode";
+import { TituloNode } from "../../plugins/TituloNode";
 
 
-import { Head_1, DocCreate } from "../toolbar/toolbar";
+import { Toolbar } from "../toolbar/toolbar";
 import './style.css'
+import { LexicalEditor } from "lexical";
 
 interface Props{}
 
@@ -38,14 +39,13 @@ export function Editor({}:Props):JSX.Element{
         namespace: 'MyEditor',
         theme,
         onError,
-        nodes: [DocumentoNo, HeadingNode, StickyHeadingNode]
+        nodes: [DocumentoNo, HeadingNode, TituloNode]
       };
     return(
       <div>
         
         <LexicalComposer initialConfig={initialConfig}>
-          <DocCreate/>
-          <Head_1/>
+          <Toolbar/>
           <RichTextPlugin
           contentEditable={<ContentEditable className="contentEditable" />}
           placeholder={<div className="placeholder">Enter some text...</div>}
@@ -53,10 +53,21 @@ export function Editor({}:Props):JSX.Element{
           />
           <HistoryPlugin></HistoryPlugin>
           <DocumentoNoPlugin/>
-
+          <SaveJSON/>
         </LexicalComposer >
       </div>
-      
-      
     )
+}
+
+
+/** ---------- Funções que se utilizam do estado do editor -------------*/
+
+/** Salva o atual estado do editor em formato JSON */
+function SaveJSON(){
+  const [editor] = useLexicalComposerContext();
+  const onClick = (e:React.MouseEvent):void => {
+    const json = editor.getEditorState().toJSON();
+    console.log(json);
+  }
+  return(<button onClick={onClick}>Salvar JSON</button>)
 }

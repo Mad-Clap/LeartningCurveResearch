@@ -1,5 +1,7 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {ElementNode, LexicalNode, type EditorConfig, Spread, SerializedElementNode,NodeKey, $createTextNode} from 'lexical';
+import { error } from 'console';
+import {ElementNode, LexicalNode, type EditorConfig, Spread, SerializedElementNode,NodeKey, $createTextNode, COMMAND_PRIORITY_EDITOR, createCommand, $getRoot, $createParagraphNode, RangeSelection} from 'lexical';
+import { $createTitulo } from '../TituloNode';
 
 export type SerializedDocumentoNode = Spread<
   {
@@ -65,7 +67,6 @@ export class DocumentoNo extends ElementNode {
 
   /** --------------------------------------------------------------------------------------------------------------------------- */
 
-
   /** -------------- Funções para exportar nó para HTML e importar do HTML ----------- */
 
   createDOM(config: EditorConfig): HTMLElement {
@@ -109,6 +110,16 @@ export class DocumentoNo extends ElementNode {
   }
   /** --------------------------------------------------------------------------------------------------------------------------- */
 
+  /** ----------------- Funções para configurar o comportamento do nó dentro do editor ----------------- */
+  
+  collapseAtStart(selection: RangeSelection): boolean {
+    const root = $getRoot();  
+    const children = this.getChildren();
+    //children.forEach(child => root.append)
+    return true;
+  }
+
+  /** --------------------------------------------------------------------------------------------------------------------------- */
 }
 
 /** ----- Funções para criação e checagem de nó -------- */
@@ -122,9 +133,18 @@ export function $isDocumentoNo(node: LexicalNode | null | undefined): node is Do
 /** --------------------------------------------------------------------------------------------------------------------------- */
 
 
-/** ----- Plugin referente ao nó Documento ------------------ */
+/** ----- Plugin referente ao nó Documento e constantes referentes a ele------------------ */
+
+ export const INSERT_DOCUMENTO_COMMAND = createCommand('insereDocumento');
+
 export function DocumentoNoPlugin():null{
   const [editor] = useLexicalComposerContext();
+
+  //função para verificar se o editor tem o nó registrado
+  if(!editor.hasNode(DocumentoNo)){
+    throw new Error("o nó Documento não está registrado no editor")
+  }
+
   const removeTextContentListener = editor.registerNodeTransform( DocumentoNo, 
     node =>{
       let noFilho = node.getFirstChild();
@@ -139,7 +159,15 @@ export function DocumentoNoPlugin():null{
           console.log(node.getTitulo())
         }
       }
+      console.log(node.getIndexWithinParent())
     }
   );
+
+  editor.registerCommand(INSERT_DOCUMENTO_COMMAND, ()=>{
+    const root = $getRoot();
+    root.append($createDocumentoNo('conceitual','vazio').append($createTitulo().append($createTextNode("Titulo do documento"))))
+    root.append($createParagraphNode())
+    return true;
+  }, COMMAND_PRIORITY_EDITOR)
   return null
 }

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@lexical/react": "^0.12.2",
+    "@lexical/selection": "^0.12.2",
     "lexical": "^0.12.2",
     "next": "14.0.0",
     "react": "^18",
